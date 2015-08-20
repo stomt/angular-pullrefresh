@@ -5,7 +5,7 @@
   /* istanbul ignore next */
   var angular = window.angular ? window.angular : 'undefined' !== typeof require ? require('angular') : undefined;
 
-  var pullrefresh = angular.module('pullrefresh', [/*'pullrefresh.suggest'*/]);
+  var pullrefresh = angular.module('pullrefresh', ['hmTouchEvents']);
 
   //
   pullrefresh.directive('pullrefresh', pullrefreshDirective);
@@ -17,12 +17,6 @@
       transclude : true,
 
       restrict: 'EA',
-      // require: 'ngModel',
-      // scope: {
-      //   threshold: '=prThreshold',
-      //   resistance: '=prResistance',
-      //   onReload: '=prOnreload'
-      // },
       scope : true,
 
       // require : 'hm',
@@ -32,7 +26,7 @@
 
 
 
-    function linkPullrefreshDirective($scope, elment, attrs, ngModelCtrl) {
+    function linkPullrefreshDirective($scope, element, attrs, ngModelCtrl) {
 
       $scope.contentStyle = {};
       $scope.ptrStyle = {};
@@ -48,10 +42,9 @@
        * @type {object}
        */
       var options = {
-        threshold: attrs.threshold || defaults.threshold,
-        // onReload: attrs.onReload || defaults.onReload,
-        onReload: attrs.pullrefresh || defaults.onReload,
-        resistance: attrs.resistance || defaults.resistance
+        threshold: attrs.pullrefreshThreshold || defaults.threshold,
+        resistance: attrs.pullrefreshResistance || defaults.resistance,
+        onReload: attrs.pullrefresh || defaults.onReload
       };
 
       activate();
@@ -75,8 +68,8 @@
       /**
        * Easy shortener for handling adding and removing body classes.
        */
-      var $body = $document[0].body,
-        bodyClass = $body.classList;
+      var bodyEl = $document[0].body,
+        bodyClass = bodyEl.classList;
 
 
 
@@ -86,9 +79,9 @@
        * @param {object} e - Event object
        */
       $scope.panStart = function(e) {
-        pan.startingPositionY = $body.scrollTop;
+        pan.startingPositionY = bodyEl.scrollTop;
 
-        if ( pan.startingPositionY === 0 ) {
+        if (pan.startingPositionY === 0) {
           pan.enabled = true;
         }
       };
@@ -99,7 +92,7 @@
        * @param {object} e - Event object
        */
       $scope.panDown = function(e) {
-        if ( ! pan.enabled ) {
+        if (! pan.enabled) {
           return;
         }
 
@@ -116,13 +109,13 @@
        * @param {object} e - Event object
        */
       $scope.panUp = function(e) {
-        if ( ! pan.enabled || pan.distance === 0 ) {
+        if (! pan.enabled || pan.distance === 0) {
           return;
         }
 
         e.preventDefault();
 
-        if ( pan.distance < e.distance / options.resistance ) {
+        if (pan.distance < e.distance / options.resistance) {
           pan.distance = 0;
         } else {
           pan.distance = e.distance / options.resistance;
@@ -138,7 +131,7 @@
        * @param {object} e - Event object
        */
       $scope.panEnd = function(e) {
-        if ( ! pan.enabled ) {
+        if (! pan.enabled) {
           return;
         }
 
@@ -147,7 +140,7 @@
         $scope.contentStyle = {};
         $scope.ptrStyle = {};
 
-        if ( bodyClass.contains( 'ptr-refresh' ) ) {
+        if (bodyClass.contains('ptr-refresh')) {
           _doLoading();
         } else {
           _doReset();
@@ -163,13 +156,13 @@
       var _setContentPan = function() {
         // Use transforms to smoothly animate elements on desktop and mobile devices
         $scope.contentStyle = {
-          transform: 'translate3d( 0, ' + pan.distance + 'px, 0 )',
-          webkitTransform: 'translate3d( 0, ' + pan.distance + 'px, 0 )'
+          transform: 'translate3d(0, ' + pan.distance + 'px, 0)',
+          webkitTransform: 'translate3d(0, ' + pan.distance + 'px, 0)'
         };
 
         $scope.ptrStyle = {
-          transform: 'translate3d( 0, ' + ( pan.distance - /*options.ptrEl.offsetHeight*/ 50 ) + 'px, 0 )',
-          webkitTransform: 'translate3d( 0, ' + pan.distance + 'px, 0 )'
+          transform: 'translate3d(0, ' + (pan.distance - element[0].querySelector('.ptr').offsetHeight) + 'px, 0)',
+          webkitTransform: 'translate3d(0, ' + pan.distance + 'px, 0)'
         };
       };
 
@@ -177,10 +170,10 @@
        * Set/remove the loading body class to show or hide the loading indicator after pull down.
        */
       var _setBodyClass = function() {
-        if ( pan.distance > options.threshold ) {
-          bodyClass.add( 'ptr-refresh' );
+        if (pan.distance > options.threshold) {
+          bodyClass.add('ptr-refresh');
         } else {
-          bodyClass.remove( 'ptr-refresh' );
+          bodyClass.remove('ptr-refresh');
         }
       };
 
@@ -188,12 +181,12 @@
        * Position content and refresh elements to show that loading is taking place.
        */
       var _doLoading = function() {
-        bodyClass.add( 'ptr-loading' );
+        bodyClass.add('ptr-loading');
 
         console.log(options.onReload);
 
         // If no valid loading function exists, just reset elements
-        if ( ! options.onReload ) {
+        if (! options.onReload) {
           return _doReset();
         }
 
@@ -201,26 +194,26 @@
         var loadingPromise = $scope.$eval(options.onReload);
 
         // For UX continuity, make sure we show loading for at least one second before resetting
-        setTimeout( function() {
+        setTimeout(function() {
           // Once actual loading is complete, reset pull to refresh
-          loadingPromise.then( _doReset );
-        }, 1000 );
+          loadingPromise.then(_doReset);
+        }, 1000);
       };
 
       /**
        * Reset all elements to their starting positions before any paning took place.
        */
       var _doReset = function() {
-        bodyClass.remove( 'ptr-loading' );
-        bodyClass.remove( 'ptr-refresh' );
-        bodyClass.add( 'ptr-reset' );
+        bodyClass.remove('ptr-loading');
+        bodyClass.remove('ptr-refresh');
+        bodyClass.add('ptr-reset');
 
         var bodyClassRemove = function() {
-          bodyClass.remove( 'ptr-reset' );
-          $body.removeEventListener( 'transitionend', bodyClassRemove, false );
+          bodyClass.remove('ptr-reset');
+          bodyEl.removeEventListener('transitionend', bodyClassRemove, false);
         };
 
-        $body.addEventListener( 'transitionend', bodyClassRemove, false );
+        bodyEl.addEventListener('transitionend', bodyClassRemove, false);
       };
 
     }

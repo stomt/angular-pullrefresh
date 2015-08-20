@@ -2,5 +2,5 @@
   'use strict';
 
   angular
-    .module('Debug', ['hmTouchEvents', 'pullrefresh']);
+    .module('Debug', ['pullrefresh']);
 })();
