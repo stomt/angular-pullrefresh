@@ -1,13 +1,3 @@
-html,
-body {
-  height: 100%;
-}
-
-body {
-  background: #333;
-  margin: 0;
-}
-
 .ptr {
   position: absolute;
   top: 0;
@@ -91,7 +81,7 @@ body {
   100% {
     -webkit-transform: scale(1);
     transform: scale(1);
-    background-color: #fff;
+    background-color: #000;
     opacity: 1;
   }
 }
@@ -106,24 +96,16 @@ body {
   100% {
     -webkit-transform: scale(1);
     transform: scale(1);
-    background-color: #fff;
+    background-color: #000;
     opacity: 1;
   }
 }
 
 .content {
-  background: #fff;
   min-height: 100%;
   z-index: 20;
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
-  padding: 50px 20px;
-  text-align: center;
-  font-family: Helvetica, Arial, sans-serif;
-  font-size: 24px;
-  font-weight: 200;
-  color: #555;
-  box-sizing: border-box;
 }
 
 .ptr-loading .content,

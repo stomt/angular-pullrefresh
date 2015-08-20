@@ -26,11 +26,27 @@
       background: #333;
       margin: 0;
     }
+
+    .content {
+      background-color: white;
+    }
   </style>
 </head>
 <body ng-app="Debug" ng-controller="DebugController as debug">
-<div pullrefresh-threshold="50" pullrefresh-resistance="5" pullrefresh="onReload()">
+<div
+  pullrefresh-threshold="50"
+  pullrefresh-resistance="5"
+  pullrefresh-loader-style="prLoaderStyle"
+  pullrefresh-show-loader="false"
+  pullrefresh-content-offset="16"
+  pullrefresh="onReload()">
+
+  <div ng-style="prLoaderStyle" class="ptr">
+    hallo welt
+  </div>
+
   <div style="font-size:100px;">Just some content!</div>
+
 </div>
 </div>
 

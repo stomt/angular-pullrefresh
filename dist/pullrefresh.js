@@ -12,16 +12,21 @@
   var pullrefresh = angular.module('pullrefresh', ['hmTouchEvents']);
 
   /* @ngInject */
-  pullrefresh.directive('pullrefresh', pullrefreshDirective);
-
-
-  function pullrefreshDirective($document) {
+  pullrefresh.directive('pullrefresh', ['$document', function($document) {
     return {
 
       transclude : true,
 
       restrict: 'EA',
-      scope : true,
+      // scope : true,
+      scope : {
+        pullrefreshContentOffset : '=',
+        pullrefreshThreshold : '=',
+        pullrefreshResistance : '=',
+        pullrefreshShowLoader : '=',
+        pullrefreshLoaderStyle : '=',
+        pullrefresh : '='
+      },
 
       // require : 'hm',
       templateUrl: 'template/pullrefresh/pullrefresh.html',
@@ -36,6 +41,9 @@
       $scope.ptrStyle = {};
 
       var defaults = {
+        pullrefreshLoaderStyle : $scope.ptrStyle,
+        showLoader : true,
+        contentOffset : null,
         threshold : 70,
         resistance : 2.5,
         onReload : null,
@@ -46,10 +54,14 @@
        * @type {object}
        */
       var options = {
+        showLoader : attrs.pullrefreshShowLoader || defaults.contentOffset,
+        contentOffset : attrs.pullrefreshContentOffset || defaults.contentOffset,
         threshold: attrs.pullrefreshThreshold || defaults.threshold,
         resistance: attrs.pullrefreshResistance || defaults.resistance,
         onReload: attrs.pullrefresh || defaults.onReload
       };
+
+      $scope.loader = options.loader;
 
       activate();
 
@@ -164,8 +176,12 @@
           webkitTransform: 'translate3d(0, ' + pan.distance + 'px, 0)'
         };
 
+        var offset = options.contentOffset !== null ?
+           options.contentOffset :
+           element[0].querySelector('.ptr').offsetHeight;
+
         $scope.ptrStyle = {
-          transform: 'translate3d(0, ' + (pan.distance - element[0].querySelector('.ptr').offsetHeight) + 'px, 0)',
+          transform: 'translate3d(0, ' + (pan.distance - offset) + 'px, 0)',
           webkitTransform: 'translate3d(0, ' + pan.distance + 'px, 0)'
         };
       };
@@ -187,8 +203,6 @@
       var _doLoading = function() {
         bodyClass.add('ptr-loading');
 
-        console.log(options.onReload);
-
         // If no valid loading function exists, just reset elements
         if (! options.onReload) {
           return _doReset();
@@ -199,8 +213,12 @@
 
         // For UX continuity, make sure we show loading for at least one second before resetting
         setTimeout(function() {
-          // Once actual loading is complete, reset pull to refresh
-          loadingPromise.then(_doReset);
+
+          if (loadingPromise.then) {
+            // Once actual loading is complete, reset pull to refresh
+            loadingPromise.then(_doReset);
+          }
+
         }, 1000);
       };
 
@@ -221,7 +239,7 @@
       };
 
     }
-  }
+  }]);
 
 })();
 
@@ -239,7 +257,7 @@
         '<div ng-style="ptrStyle" class="ptr">' +
             '<span class="genericon genericon-next"></span>' +
 
-            '<div class="loading">' +
+            '<div ng-if="!showLoader" class="loading">' +
                 '<span class="l1"></span>' +
                 '<span class="l2"></span>' +
                 '<span class="l3"></span>' +
@@ -251,7 +269,7 @@
           'hm-pandown="panDown" ' +
           'hm-panup="panUp" ' +
           'hm-panend="panEnd">' +
-          'Pull down to refresh!' +
+          //'Pull down to refresh!' +
           '<div ng-transclude></div>' +
         '</div>');
     }]);

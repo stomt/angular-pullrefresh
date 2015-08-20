@@ -9,7 +9,7 @@
   angular.module('pullrefresh')
     .run(['$templateCache', function($templateCache) {
       $templateCache.put('template/pullrefresh/pullrefresh.html',
-        '<div ng-style="ptrStyle" class="ptr">' +
+        '<div ng-if="!showLoader" ng-style="ptrStyle" class="ptr">' +
             '<span class="genericon genericon-next"></span>' +
 
             '<div class="loading">' +
@@ -24,7 +24,7 @@
           'hm-pandown="panDown" ' +
           'hm-panup="panUp" ' +
           'hm-panend="panEnd">' +
-          'Pull down to refresh!' +
+          //'Pull down to refresh!' +
           '<div ng-transclude></div>' +
         '</div>');
     }]);
