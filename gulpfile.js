@@ -2,6 +2,7 @@ var gulp = require("gulp");
 var concat = require("gulp-concat");
 var uglify = require("gulp-uglify");
 var rename = require("gulp-rename");
+var rebaseUrls = require("gulp-css-rebase-urls");
 
 gulp.task("js", function() {
   gulp.src(["src/js/*.js"])            // Read the files
@@ -12,6 +13,14 @@ gulp.task("js", function() {
     .pipe(gulp.dest("dist"))            // Write minified to disk
 });
 
+gulp.task("css", function() {
+  gulp.src(["src/*/*.css", "fonts/genericons/genericons.css"])            // Read the files
+    .pipe(rebaseUrls())
+    .pipe(concat("pullrefresh.css"))   // Combine into 1 file
+    .pipe(gulp.dest("dist"));
+});
+
 gulp.task("default", function() {
   gulp.start("js");
+  gulp.start("css");
 });

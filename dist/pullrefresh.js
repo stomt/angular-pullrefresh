@@ -11,7 +11,7 @@
 
   var pullrefresh = angular.module('pullrefresh', ['hmTouchEvents']);
 
-  //
+  /* @ngInject */
   pullrefresh.directive('pullrefresh', pullrefreshDirective);
 
 

@@ -7,7 +7,7 @@
 
   <!-- dependencies -->
   <link rel="stylesheet" type="text/css" href="../src/css/pullrefresh.css"/>
-  <link rel="stylesheet" type="text/css" href="../src/genericons/genericons.css"/>
+  <link rel="stylesheet" type="text/css" href="../fonts/genericons/genericons.css"/>
   <script type="text/javascript" src="../bower_components/hammerjs/hammer.js"></script>
   <script type="text/javascript" src="../bower_components/angular/angular.js"></script>
   <script type="text/javascript" src="../bower_components/ryanmullins-angular-hammer/angular.hammer.js"></script>
@@ -17,6 +17,16 @@
   <script type="text/javascript" src="debug-app.js"></script>
   <script type="text/javascript" src="debug-controller.js"></script>
 
+  <style>
+    html, body {
+      height: 100%;
+    }
+
+    body {
+      background: #333;
+      margin: 0;
+    }
+  </style>
 </head>
 <body ng-app="Debug" ng-controller="DebugController as debug">
 <div pullrefresh-threshold="50" pullrefresh-resistance="5" pullrefresh="onReload()">
