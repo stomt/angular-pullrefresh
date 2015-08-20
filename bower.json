@@ -5,8 +5,15 @@
   "homepage": "",
   "license": "MIT",
   "private": true,
+  "main": "./src/js.js",
+  "ignore" : [
+    "**/.*",
+    "node_modules",
+    "components"
+  ],
   "dependencies": {
     "angular": "~1.4.x",
     "ryanmullins-angular-hammer": "~2.1.10"
+
   }
 }
