@@ -5,7 +5,7 @@
   "homepage": "",
   "license": "MIT",
   "private": true,
-  "main": "./src/js.js",
+  "main": "./dist/pullrefresh.min.js",
   "ignore" : [
     "**/.*",
     "node_modules",
