@@ -9,7 +9,7 @@
   angular.module('pullrefresh')
     .run(['$templateCache', function($templateCache) {
       $templateCache.put('template/pullrefresh/pullrefresh.html',
-        '<div ng-if="!showLoader" ng-style="ptrStyle" class="ptr">' +
+        '<div ng-if="!hideLoader" ng-style="ptrStyle" class="ptr">' +
             '<span class="genericon genericon-next"></span>' +
 
             '<div class="loading">' +

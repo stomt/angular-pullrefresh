@@ -18,17 +18,18 @@
       transclude : true,
 
       restrict: 'EA',
-      // scope : true,
+
       scope : {
-        pullrefreshContentOffset : '@',
-        pullrefreshThreshold : '@',
-        pullrefreshResistance : '@',
-        pullrefreshShowLoader : '@',
-        pullrefreshLoaderStyle : '=',
-        pullrefresh : '@'
+        // make the internal loader state known to external
+        // components
+        ptrStyle : '=pullrefreshLoaderStyle',
+
+        hideLoader : '=pullrefreshHideLoader',
+
+        // make the callback is evaluated on the parent scope
+        pullrefresh : '&'
       },
 
-      // require : 'hm',
       templateUrl: 'template/pullrefresh/pullrefresh.html',
       link: linkPullrefreshDirective
     };
@@ -38,14 +39,12 @@
     function linkPullrefreshDirective($scope, element, attrs) {
 
       $scope.contentStyle = {};
+      $scope.ptrStyle = {};
 
       var defaults = {
-        loaderStyle : {},
-        showLoader : true,
         contentOffset : null,
         threshold : 70,
-        resistance : 2.5,
-        onReload : null,
+        resistance : 2.5
       };
 
       /**
@@ -53,18 +52,10 @@
        * @type {object}
        */
       var options = {
-        showLoader : attrs.pullrefreshShowLoader || defaults.contentOffset,
         contentOffset : attrs.pullrefreshContentOffset || defaults.contentOffset,
         threshold: attrs.pullrefreshThreshold || defaults.threshold,
-        resistance: attrs.pullrefreshResistance || defaults.resistance,
-        onReload: attrs.pullrefresh || defaults.onReload
+        resistance: attrs.pullrefreshResistance || defaults.resistance
       };
-
-      $scope.showLoader = options.showLoader;
-
-      if (attrs.pullrefreshLoaderStyle) {
-        $scope.ptrStyle = attrs.pullrefreshLoaderStyle;
-      }
 
       activate();
 
@@ -207,12 +198,12 @@
         bodyClass.add('ptr-loading');
 
         // If no valid loading function exists, just reset elements
-        if (! options.onReload) {
+        if (!$scope.pullrefresh) {
           return _doReset();
         }
 
         // The loading function should return a promise
-        var loadingPromise = $scope.$eval(options.onReload);
+        var loadingPromise = $scope.$eval($scope.pullrefresh);
 
         // For UX continuity, make sure we show loading for at least one second before resetting
         setTimeout(function() {
