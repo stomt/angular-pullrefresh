@@ -31,6 +31,43 @@
   display: none;
 }
 
+.ptr {
+  display: none;
+}
+
+.ptr-pull .ptr,
+.ptr-refresh .ptr,
+.ptr-reset .ptr,
+.ptr-loading .ptr {
+  display: block;
+}
+
+.ptr-state-pull,
+.ptr-state-release,
+.ptr-state-load {
+  display: none;
+}
+
+.ptr-pull .ptr-state-pull {
+  display: block;
+}
+
+.ptr-pull.ptr-refresh .ptr-state-pull {
+  display: none;
+}
+
+.ptr-refresh .ptr-state-release {
+  display: block;
+}
+
+.ptr-refresh.ptr-loading .ptr-state-release {
+  display: none;
+}
+
+.ptr-loading .ptr-state-load {
+  display: block;
+}
+
 .loading {
   text-align: center;
   opacity: .4;
