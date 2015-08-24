@@ -62,7 +62,6 @@
       ////////////
 
       function activate() {
-
       }
 
       /**
@@ -78,7 +77,7 @@
       /**
        * Easy shortener for handling adding and removing body classes.
        */
-      var bodyEl = $document[0].body,
+      var bodyEl = element[0] || $document[0].body,
         bodyClass = bodyEl.classList;
 
 
@@ -174,9 +173,15 @@
            options.contentOffset :
            element[0].querySelector('.ptr').offsetHeight;
 
+        // in case the default loader is being hidden, use the negative
+        // pan distance to keep the loader atop
+        var loaderOffset = $scope.hideLoader ?
+            (-pan.distance - offset) :
+            pan.distance - offset;
+
         $scope.ptrStyle = {
-          transform: 'translate3d(0, ' + (pan.distance - offset) + 'px, 0)',
-          webkitTransform: 'translate3d(0, ' + pan.distance + 'px, 0)'
+          transform: 'translate3d(0, ' + loaderOffset + 'px, 0)',
+          webkitTransform: 'translate3d(0, ' + loaderOffset + 'px, 0)'
         };
       };
 
@@ -188,6 +193,13 @@
           bodyClass.add('ptr-refresh');
         } else {
           bodyClass.remove('ptr-refresh');
+        }
+
+        if (pan.distance > 0) {
+          bodyClass.add('ptr-pull');
+        }
+        else {
+          bodyClass.remove('ptr-pull');
         }
       };
 

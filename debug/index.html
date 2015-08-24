@@ -27,6 +27,10 @@
       margin: 0;
     }
 
+    .ptr {
+      transform: translateY(-50px);
+    }
+
     .content {
       background-color: white;
     }
@@ -36,11 +40,17 @@
 <div
   pullrefresh-loader-style="prLoaderStyle"
   pullrefresh-hide-loader="true"
-  pullrefresh-content-offset="16"
+  pullrefresh-content-offset="0"
   pullrefresh="onReload()">
 
   <div ng-style="prLoaderStyle" class="ptr">
-      <span class="genericon genericon-next"></span>
+
+      <div ng-class="ptrClass">
+        <span class="genericon genericon-next"></span>
+        <span class="ptr-state-pull">Pull to refresh</span>
+        <span class="ptr-state-release">Release to refresh</span>
+        <span class="ptr-state-load">Reloading, please wait...</span>
+      </div>
 
       <div class="loading">
           <span class="l1"></span>
