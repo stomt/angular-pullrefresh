@@ -238,6 +238,7 @@
 
         var bodyClassRemove = function() {
           bodyClass.remove('ptr-reset');
+          bodyClass.remove('ptr-pull');
           bodyEl.removeEventListener('transitionend', bodyClassRemove, false);
         };
 
