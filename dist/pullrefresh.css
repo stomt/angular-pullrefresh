@@ -10,7 +10,7 @@
 }
 
 .ptr .ptr-pulldown-icon {
-  color: black;
+  color:black;
   opacity: .6;
   font-size: 34px;
   width: auto;
@@ -20,28 +20,27 @@
 
 .ptr-pulldown-icon:before,
 .ptr-pulldown-icon::before {
-  content: '\0020';
+  content:'\0020';
   display: inline-block;
   width: 10px;
-  height: 10px;
-  border: 4px solid black;
-  border-top: 0;
-  border-left: 0;
+  height:10px;
+  border:4px solid black;
+  border-top:0;
+  border-left:0;
   transition: all .25s ease;
   -webkit-transform: rotate(45deg);
   transform: rotate(45deg);
 }
-
 .ptr-refresh .ptr-pulldown-icon:before,
 .ptr-refresh .ptr-pulldown-icon::before {
   -webkit-transform: rotate(225deg);
   transform: rotate(225deg);
 }
-
 .ptr-loading .ptr .ptr-pulldown-icon,
 .ptr-reset .ptr .ptr-pulldown-icon {
   display: none;
 }
+
 
 .ptr {
   display: none;
@@ -53,6 +52,7 @@
 .ptr-loading .ptr {
   display: block;
 }
+
 
 .ptr-state-pull,
 .ptr-state-release,
@@ -80,13 +80,13 @@
   display: block;
 }
 
+
 .loading {
   text-align: center;
   opacity: .4;
   margin: 12px 0 0 5px;
   display: none;
 }
-
 .ptr-loading .loading {
   display: block;
 }
@@ -157,10 +157,8 @@
   -webkit-perspective: 1000;
 }
 
-.ptr-loading .content,
-.ptr-reset .content,
-.ptr-loading .ptr,
-.ptr-reset .ptr {
+.ptr-loading .content, .ptr-reset .content,
+.ptr-loading .ptr, .ptr-reset .ptr {
   transition: all .25s ease;
 }
 
