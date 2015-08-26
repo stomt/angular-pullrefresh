@@ -7,9 +7,12 @@
   "license": "MIT",
   "devDependencies": {
     "gulp": "^3.9.0",
+    "gulp-babel": "^5.2.1",
     "gulp-concat": "^2.6.0",
     "gulp-css-rebase-urls": "0.0.5",
     "gulp-rename": "^1.2.2",
+    "gulp-serve": "^1.0.0",
+    "gulp-sourcemaps": "^1.5.2",
     "gulp-uglify": "^1.2.0"
   }
 }

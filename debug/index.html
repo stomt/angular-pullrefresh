@@ -7,12 +7,8 @@
 
   <!-- dependencies -->
   <link rel="stylesheet" type="text/css" href="../src/css/pullrefresh.css"/>
-  <link rel="stylesheet" type="text/css" href="../fonts/genericons/genericons.css"/>
-  <script type="text/javascript" src="../bower_components/hammerjs/hammer.js"></script>
   <script type="text/javascript" src="../bower_components/angular/angular.js"></script>
-  <script type="text/javascript" src="../bower_components/ryanmullins-angular-hammer/angular.hammer.js"></script>
-  <script type="text/javascript" src="../src/js/directive.js"></script>
-  <script type="text/javascript" src="../src/js/template.js"></script>
+  <script type="text/javascript" src="../dist/pullrefresh.js"></script>
   <!-- debug app -->
   <script type="text/javascript" src="debug-app.js"></script>
   <script type="text/javascript" src="debug-controller.js"></script>
@@ -20,6 +16,7 @@
   <style>
     html, body {
       height: 100%;
+      font-family: sans-serif;
     }
 
     body {
@@ -27,41 +24,95 @@
       margin: 0;
     }
 
-    .ptr {
+    .container{
+      margin-top:100px;
+      width: 100%;
+      height: 300px;
+    }
+    .scrollable {
+      -webkit-overflow-scrolling: touch;
       transform: translateY(-50px);
+      overflow-y:auto;
+      height: 100%;
+      position: relative;
     }
 
     .content {
       background-color: white;
     }
+
+    body {
+      position: relative;
+    }
+
+    .log{
+      border-top: 20px solid black;
+      position: absolute;
+      bottom: 0;
+      height: 200px;
+      left: 0;
+      right: 0;
+      background-color: white;
+      font-size: 8px;
+      overflow-y: scroll;
+    }
+
+    .log div {
+      border-top: 1px dolid #efefef;
+    }
   </style>
 </head>
 <body ng-app="Debug" ng-controller="DebugController as debug">
-<div
-  pullrefresh-loader-style="prLoaderStyle"
-  pullrefresh-hide-loader="true"
-  pullrefresh-content-offset="0"
-  pullrefresh="onReload()">
+<script>
+  /*global document, window*/
+  'use strict';
 
-  <div ng-style="prLoaderStyle" class="ptr">
+  function createConsole() {
+    var log = document.createElement('div');
+    log.classList.add('log');
+    document.body.appendChild(log);
 
-      <div ng-class="ptrClass">
-        <span class="ptr-pulldown-icon"></span>
-        <span class="ptr-state-pull">Pull to refresh</span>
-        <span class="ptr-state-release">Release to refresh</span>
-        <span class="ptr-state-load">Reloading, please wait...</span>
-      </div>
+    var _console = window.console || null;
 
-      <div class="loading">
-          <span class="l1"></span>
-          <span class="l2"></span>
-          <span class="l3"></span>
-      </div>
+
+    window.console = {
+      log : function () {
+        var line = document.createElement('div');
+        line.innerText = [].slice.call(arguments).join(', ');
+        log.appendChild(line);
+        var top = log.scrollHeight;
+        log.scrollTop = top - 200;
+      }
+    };
+  }
+
+  // createConsole();
+</script>
+  <div class="scrollable"
+    pullrefresh-loader-style="prLoaderStyle"
+    pullrefresh-hide-loader="true"
+    pullrefresh-content-offset="0"
+    pullrefresh="onReload()">
+
+    <div ng-style="prLoaderStyle" class="ptr">
+
+        <div ng-class="ptrClass">
+          <span class="ptr-pulldown-icon"></span>
+          <span class="ptr-state-pull">Pull to refresh</span>
+          <span class="ptr-state-release">Release to refresh</span>
+          <span class="ptr-state-load">Reloading, please wait...</span>
+        </div>
+
+        <div class="loading">
+            <span class="l1"></span>
+            <span class="l2"></span>
+            <span class="l3"></span>
+        </div>
+    </div>
+
+    <div style="font-size:100px;">Just some content, that's by far longer than one display page on a mobile device, so that it should be scrollable.</div>
+
   </div>
-
-  <div style="font-size:100px;">Just some content!</div>
-
-</div>
 </div>
 
 </body>

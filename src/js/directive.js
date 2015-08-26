@@ -1,18 +1,208 @@
 (function() {
-  /**
-   * Code heavily inspired by @see https://github.com/apeatling/web-pull-to-refresh
-   *
-   */
+  'use strict';
+
+  class PubSub {
+
+    constructor () {
+      this.handlers = [];
+    }
+
+    subscribe (event, handler, context) {
+
+      if (typeof context === 'undefined') {
+        context = handler;
+      }
+
+      this.handlers.push({
+        event: event,
+        handler: handler.bind(context)
+      });
+
+      return this;
+    }
+
+    publish (event, ...args) {
+      let i = 0;
+
+      for (; i < this.handlers.length; i += 1) {
+
+          if (this.handlers[i].event === event) {
+              this.handlers[i].handler(...args);
+          }
+
+      }
+    }
+  }
+
+
+  class Pan {
+
+  constructor (options = {resistance : 1}) {
+    this._options = options;
+
+    this.reset();
+  }
+
+  get distance () {
+    return this._distance;
+  }
+
+  get isScrolling () {
+    return this._isScrolling;
+  }
+
+  get didMove () {
+    return this._didMove;
+  }
+
+  reset () {
+    this._distance = 0;
+    this._start = 0;
+    this._isScrolling = false;
+    this._didMove = false;
+  }
+
+  begin (val) {
+    this._start = val;
+  }
+
+  calcDistance (pos) {
+    return Math.round((pos - this._start) / this._options.resistance);
+  }
+
+  move (distance) {
+    this._distance = distance;
+    this._didMove = true;
+    this._isScrolling = false;
+  }
+
+  scroll () {
+    this._isScrolling = true;
+    this._didMove = false;
+  }
+
+}
+
+  class PullRefresh extends Pan {
+
+    constructor () {
+      super(...arguments);
+
+      this._el = this._options.el;
+
+      this._options.threshold = this._options.threshold || 0;
+
+      this._state = {};
+
+      this.pubSub = new PubSub();
+    }
+
+    get el () {
+      return this._el;
+    }
+
+    get state () {
+      return this._state;
+    }
+
+    reset () {
+      super.reset();
+      this._state = {};
+    }
+
+    isScrolledToTop () {
+      return this._el.scrollTop === 0;
+    }
+
+    move (pos, event) {
+
+      let distance = this.calcDistance(pos);
+
+      if (!this.isScrolling &&
+        this.isScrolledToTop() &&
+        distance > 0) {
+
+        // this._el.style.overflow = 'visible';
+        // this._el.scrollTop = 0;
+
+        super.move(distance);
+
+        this._state.refresh = this.distance > this._options.threshold;
+        this._state.pull = this.distance > 0;
+
+        this.pubSub.publish('moved', this);
+
+        return true;
+      }
+      else {
+
+        this.scroll();
+
+        return false;
+      }
+
+    }
+
+
+    end () {
+
+      if (this.didMove) {
+
+        this.pubSub.publish('end', this);
+
+        this.reset();
+
+        return true;
+      }
+    }
+
+
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   'use strict';
 
-  /* istanbul ignore next */
-  var angular = window.angular ? window.angular : 'undefined' !== typeof require ? require('angular') : undefined;
+  const TOUCH_START = 'touchstart MSPointerDown pointerdown';
+  const TOUCH_MOVE = 'touchmove MSPointerMove MSPointerHover pointermove';
+  const TOUCH_END = 'touchend touchcancel MSPointerUp MSPointerCancel pointerup pointercancel';
 
-  var pullrefresh = angular.module('pullrefresh', ['hmTouchEvents']);
+  const defaults = {
+    contentOffset : null,
+    threshold : 70,
+    resistance : 2.5
+  };
+
+  /* istanbul ignore next */
+  let angular = window.angular ?
+    window.angular :
+    'undefined' !== typeof require ?
+      require('angular') :
+      undefined;
+
+  let pullrefresh = angular.module('pullrefresh', []);
+
+
+
 
   /* @ngInject */
-  pullrefresh.directive('pullrefresh', ['$document', function($document) {
+  pullrefresh.directive('pullrefresh', ['$window', '$document', function($window, $document) {
+
     return {
 
       transclude : true,
@@ -31,8 +221,16 @@
       },
 
       templateUrl: 'template/pullrefresh/pullrefresh.html',
+
       link: linkPullrefreshDirective
+
     };
+
+
+
+
+
+    ///////////////////////////////////////////////////////////
 
 
 
@@ -41,44 +239,86 @@
       $scope.contentStyle = {};
       $scope.ptrStyle = {};
 
-      var defaults = {
-        contentOffset : null,
-        threshold : 70,
-        resistance : 2.5
-      };
+
 
       /**
        * Hold all of the merged parameter and default module options
        * @type {object}
        */
-      var options = {
+      let options = {
         contentOffset : attrs.pullrefreshContentOffset || defaults.contentOffset,
         threshold: attrs.pullrefreshThreshold || defaults.threshold,
-        resistance: attrs.pullrefreshResistance || defaults.resistance
+        resistance: attrs.pullrefreshResistance || defaults.resistance || 1
       };
+
+      /**
+       * Easy shortener for handling adding and removing body classes.
+       */
+      let bodyEl = element[0] || $document[0].body,
+        bodyClass = bodyEl.classList;
+
+
+      /**
+       * Holds all information about the current pan action
+       */
+      let pan = new PullRefresh({
+        el : bodyEl,
+        threshold : options.threshold,
+        resistance : options.resistance
+      });
+
+
 
       activate();
 
       ////////////
 
       function activate() {
+        pan.reset();
+
+        pan.pubSub
+        .subscribe('moved', (pan) => {
+
+          bodyClass[pan.state.refresh ? 'add' : 'remove']('ptr-refresh');
+          bodyClass[pan.state.pull ? 'add' : 'remove']('ptr-pull');
+
+          setContentPan(pan);
+        });
+
+
+
+        pan.pubSub.subscribe('end', (pan) => {
+          setContentPan(null);
+
+          if (pan.state.refresh) {
+            doLoading(pan);
+          } else {
+            doReset(pan);
+          }
+
+        });
+
+        listen(bodyEl, TOUCH_START, touchStart);
+        listen(bodyEl, TOUCH_MOVE, touchMove);
+        listen(bodyEl, TOUCH_END, touchEnd);
       }
 
-      /**
-       * Pan event parameters
-       * @type {object}
-       */
-      var pan = {
-        enabled: false,
-        distance: 0,
-        startingPositionY: 0
-      };
+      function listen(el, evt, handler) {
 
-      /**
-       * Easy shortener for handling adding and removing body classes.
-       */
-      var bodyEl = element[0] || $document[0].body,
-        bodyClass = bodyEl.classList;
+        evt = evt.split(' ');
+        let i = 0;
+
+        while (evt[i] && !(`on${evt[i].toLowerCase()}` in $window)) {
+          i += 1;
+        }
+
+        if (i < evt.length) {
+          evt = evt[i];
+        }
+
+        el.addEventListener(evt, handler, false);
+
+      }
 
 
 
@@ -87,131 +327,105 @@
        *
        * @param {object} e - Event object
        */
-      $scope.panStart = function(e) {
-        pan.startingPositionY = bodyEl.scrollTop;
+      function touchStart (e) {
 
-        if (pan.startingPositionY === 0) {
-          pan.enabled = true;
-        }
-      };
+        let t = e.touches ? e.touches[0] : e;
 
-      /**
-       * Handle element on screen movement when the pandown events is firing.
-       *
-       * @param {object} e - Event object
-       */
-      $scope.panDown = function(e) {
-        if (! pan.enabled) {
-          return;
-        }
+        pan.begin(t.clientY);
 
-        e.preventDefault();
-        pan.distance = e.distance / options.resistance;
-
-        _setContentPan();
-        _setBodyClass();
-      };
+      }
 
       /**
        * Handle element on screen movement when the pandown events is firing.
        *
        * @param {object} e - Event object
        */
-      $scope.panUp = function(e) {
-        if (! pan.enabled || pan.distance === 0) {
-          return;
+      function touchMove (e) {
+
+        let t = e.touches ? e.touches[0] : e;
+
+        if (pan.move(t.clientY)) {
+          event.preventDefault();
+          event.stopPropagation();
         }
 
-        e.preventDefault();
+      }
 
-        if (pan.distance < e.distance / options.resistance) {
-          pan.distance = 0;
-        } else {
-          pan.distance = e.distance / options.resistance;
+      function touchEnd (e) {
+
+        if (pan.end()) {
+          event.preventDefault();
+          event.stopPropagation();
         }
 
-        _setContentPan();
-        _setBodyClass();
-      };
+      }
 
-      /**
-       * Determine how to animate and position elements when the panend event fires.
-       *
-       * @param {object} e - Event object
-       */
-      $scope.panEnd = function(e) {
-        if (! pan.enabled) {
-          return;
-        }
 
-        e.preventDefault();
 
-        $scope.contentStyle = {};
-        $scope.ptrStyle = {};
 
-        if (bodyClass.contains('ptr-refresh')) {
-          _doLoading();
-        } else {
-          _doReset();
-        }
 
-        pan.distance = 0;
-        pan.enabled = false;
-      };
+
+
 
       /**
        * Set the CSS transform on the content element to move it on the screen.
        */
-      var _setContentPan = function() {
-        // Use transforms to smoothly animate elements on desktop and mobile devices
-        $scope.contentStyle = {
-          transform: 'translate3d(0, ' + pan.distance + 'px, 0)',
-          webkitTransform: 'translate3d(0, ' + pan.distance + 'px, 0)'
-        };
+      function setContentPan (pan) {
 
-        var offset = options.contentOffset !== null ?
-           options.contentOffset :
-           element[0].querySelector('.ptr').offsetHeight;
+        if (pan === null) {
 
-        // in case the default loader is being hidden, use the negative
-        // pan distance to keep the loader atop
-        var loaderOffset = $scope.hideLoader ?
-            (-pan.distance - offset) :
-            pan.distance - offset;
+          $scope.contentStyle = {};
+          $scope.ptrStyle = {};
 
-        $scope.ptrStyle = {
-          transform: 'translate3d(0, ' + loaderOffset + 'px, 0)',
-          webkitTransform: 'translate3d(0, ' + loaderOffset + 'px, 0)'
-        };
-      };
-
-      /**
-       * Set/remove the loading body class to show or hide the loading indicator after pull down.
-       */
-      var _setBodyClass = function() {
-        if (pan.distance > options.threshold) {
-          bodyClass.add('ptr-refresh');
-        } else {
-          bodyClass.remove('ptr-refresh');
-        }
-
-        if (pan.distance > 0) {
-          bodyClass.add('ptr-pull');
         }
         else {
-          bodyClass.remove('ptr-pull');
+
+          let offset = getContentOffset(options);
+
+          // in case the default loader is being hidden, use the negative
+          // pan distance to keep the loader atop
+          let loaderOffset = getLoaderOffset(pan, offset);
+
+            // Use transforms to smoothly animate elements on desktop and mobile devices
+          $scope.contentStyle = {
+            transform: 'translate3d(0, ' + pan.distance + 'px, 0)',
+            webkitTransform: 'translate3d(0, ' + pan.distance + 'px, 0)'
+          };
+
+          $scope.ptrStyle = {
+            transform: 'translate3d(0, ' + loaderOffset + 'px, 0)',
+            webkitTransform: 'translate3d(0, ' + loaderOffset + 'px, 0)'
+          };
+
         }
-      };
+
+        $scope.$apply();
+      }
+
+
+
+
+      function getContentOffset () {
+        return options.contentOffset !== null ?
+          options.contentOffset :
+          element[0].querySelector('.ptr').offsetHeight;
+      }
+
+      function getLoaderOffset (pan, offset) {
+        return $scope.hideLoader ?
+          (-pan.distance - offset) :
+          pan.distance - offset;
+      }
 
       /**
        * Position content and refresh elements to show that loading is taking place.
        */
-      var _doLoading = function() {
-        bodyClass.add('ptr-loading');
+      function doLoading (pan) {
+        pan.el.classList.add('ptr-loading');
 
         // If no valid loading function exists, just reset elements
         if (!$scope.pullrefresh) {
-          return _doReset();
+          return doReset(pan);
         }
 
         // The loading function should return a promise
@@ -222,7 +436,7 @@
 
           if (loadingPromise.then) {
             // Once actual loading is complete, reset pull to refresh
-            loadingPromise.then(_doReset);
+            loadingPromise.then(() => doReset(pan));
           }
 
         }, 1000);
@@ -231,18 +445,21 @@
       /**
        * Reset all elements to their starting positions before any paning took place.
        */
-      var _doReset = function() {
-        bodyClass.remove('ptr-loading');
-        bodyClass.remove('ptr-refresh');
-        bodyClass.add('ptr-reset');
+      function doReset (pan) {
+        let el = pan.el,
+          classList = el.classList;
 
-        var bodyClassRemove = function() {
-          bodyClass.remove('ptr-reset');
-          bodyClass.remove('ptr-pull');
-          bodyEl.removeEventListener('transitionend', bodyClassRemove, false);
+        classList.remove('ptr-loading');
+        classList.remove('ptr-refresh');
+        classList.add('ptr-reset');
+
+        var elClassRemove = function() {
+          classList.remove('ptr-reset');
+          classList.remove('ptr-pull');
+          el.removeEventListener('transitionend', elClassRemove, false);
         };
 
-        bodyEl.addEventListener('transitionend', bodyClassRemove, false);
+        el.addEventListener('transitionend', elClassRemove, false);
       };
 
     }

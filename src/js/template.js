@@ -19,11 +19,7 @@
             '</div>' +
         '</div>' +
 
-        '<div ng-style="contentStyle" class="content" ' +
-          'hm-panstart="panStart" ' +
-          'hm-pandown="panDown" ' +
-          'hm-panup="panUp" ' +
-          'hm-panend="panEnd">' +
+        '<div ng-style="contentStyle" class="content">' +
           //'Pull down to refresh!' +
           '<div ng-transclude></div>' +
         '</div>');
