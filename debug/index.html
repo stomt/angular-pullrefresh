@@ -14,20 +14,21 @@
   <script type="text/javascript" src="debug-controller.js"></script>
 
   <style>
+
     html, body {
       height: 100%;
       font-family: sans-serif;
     }
 
     body {
+      position: relative;
       background: #333;
       margin: 0;
     }
 
     .scrollable {
       -webkit-overflow-scrolling: touch;
-      overflow-y:auto;
-
+      overflow-y: auto;
       position: relative;
     }
 
@@ -35,9 +36,9 @@
       background-color: white;
     }
 
-    body {
-      position: relative;
-    }
+  </style>
+
+  <style>
 
     .log{
       border-top: 20px solid black;
@@ -55,10 +56,8 @@
       border-top: 1px dolid #efefef;
     }
 
-    .ptr-loading .ptr {
-      transform: translateY(-50px);
-    }
   </style>
+
 </head>
 <body ng-app="Debug" ng-controller="DebugController as debug">
 <script>
@@ -108,7 +107,7 @@
         </div>
     </div>
 
-    <div style="font-size:100px;">Just some content, that's by far longer than one display page on a mobile device, so that it should be scrollable.</div>
+    <div class="content" style="font-size:100px;">Just some content, that's by far longer than one display page on a mobile device, so that it should be scrollable.</div>
 
   </div>
 </div>

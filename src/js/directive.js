@@ -338,6 +338,8 @@
        */
       function touchStart (e) {
 
+        pan.reset();
+
         if (pan.isLoading) {
           return;
         }

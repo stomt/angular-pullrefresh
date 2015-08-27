@@ -10,7 +10,7 @@
       console.log("reloading");
 
       return new Promise(function (ok) {
-        window.setTimeout(ok, 3000);
+        window.setTimeout(ok, 1000);
       });
     };
 

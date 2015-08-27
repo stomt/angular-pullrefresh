@@ -19,7 +19,7 @@
             '</div>' +
         '</div>' +
 
-        '<div ng-style="contentStyle" class="content">' +
+        '<div ng-style="contentStyle" class="ptr-content">' +
           //'Pull down to refresh!' +
           '<div ng-transclude></div>' +
         '</div>');

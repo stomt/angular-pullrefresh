@@ -4,9 +4,10 @@
   left: 0;
   width: 100%;
   color: #fff;
-  z-index: 10;
+  z-index: 0;
   text-align: center;
-  height: 50px;
+  height: 80px;
+  display: none;
 }
 
 .ptr .ptr-pulldown-icon {
@@ -41,11 +42,6 @@
   display: none;
 }
 
-
-.ptr {
-  display: none;
-}
-
 .ptr-pull .ptr,
 .ptr-refresh .ptr,
 .ptr-reset .ptr,
@@ -77,6 +73,7 @@
 }
 
 .ptr-loading .ptr-state-load {
+  margin-top: 15px;
   display: block;
 }
 
@@ -89,6 +86,11 @@
 }
 .ptr-loading .loading {
   display: block;
+}
+
+.ptr-loading .ptr {
+  -webkit-transform: translateY(-80px);
+  transform: translateY(-80px);
 }
 
 .loading span {
@@ -150,24 +152,29 @@
   }
 }
 
-.content {
+.ptr-content {
   min-height: 100%;
-  z-index: 20;
   -webkit-backface-visibility: hidden;
   -webkit-perspective: 1000;
 }
 
-.ptr-loading .content, .ptr-reset .content,
-.ptr-loading .ptr, .ptr-reset .ptr {
+.ptr {
+  z-index: -1;
+}
+
+.ptr-loading .ptr-content,
+.ptr-reset .ptr-content,
+.ptr-loading .ptr,
+.ptr-reset .ptr {
   transition: all .25s ease;
 }
 
-.ptr-reset .content {
+.ptr-reset .ptr-content {
   -webkit-transform: translate3d( 0, 0, 0 );
   transform: translate3d( 0, 0, 0 );
 }
 
-.ptr-loading .content {
-  -webkit-transform: translate3d( 0, 50px, 0 );
-  transform: translate3d( 0, 50px, 0 );
+.ptr-loading .ptr-content {
+  -webkit-transform: translate3d( 0, 80px, 0 );
+  transform: translate3d( 0, 80px, 0 );
 }

@@ -10,7 +10,8 @@ var concat = require('gulp-concat');
 var serve = require('gulp-serve');
 
 var paths = {
-  babel : './src/**/*.js'
+  babel : './src/**/*.js',
+  css : "src/*/*.css"
 };
 
 gulp.task("uglify", function() {
@@ -22,7 +23,7 @@ gulp.task("uglify", function() {
 
 
 gulp.task("css", function() {
-  gulp.src(["src/*/*.css"])             // Read the files
+  gulp.src(paths.css)             // Read the files
     .pipe(concat("pullrefresh.css"))    // Combine into 1 file
     .pipe(gulp.dest("dist"));
 });
@@ -53,6 +54,7 @@ gulp.task("build", function() {
 
 gulp.task('default', function () {
   gulp.start('serve');
+  gulp.watch(paths.css, ['css']);
   gulp.watch(paths.babel, ['compile']);
 });
 
