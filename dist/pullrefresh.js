@@ -139,6 +139,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       key: 'reset',
       value: function reset() {
         _get(Object.getPrototypeOf(PullRefresh.prototype), 'reset', this).call(this);
+        this.resetState();
+      }
+    }, {
+      key: 'resetState',
+      value: function resetState() {
         this._state = {};
       }
     }, {
@@ -282,6 +287,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       function activate() {
         pan.reset();
 
+        pan.isLoading = false;
+
         pan.pubSub.subscribe('moved', function (pan) {
 
           bodyClass[pan.state.refresh ? 'add' : 'remove']('ptr-refresh');
@@ -328,6 +335,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        */
       function touchStart(e) {
 
+        if (pan.isLoading) {
+          return;
+        }
+
         var t = e.touches ? e.touches[0] : e;
 
         pan.begin(t.clientY);
@@ -340,6 +351,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        */
       function touchMove(e) {
 
+        if (pan.isLoading) {
+          return;
+        }
+
         var t = e.touches ? e.touches[0] : e;
 
         if (pan.move(t.clientY)) {
@@ -349,6 +364,10 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       }
 
       function touchEnd(e) {
+
+        if (pan.isLoading) {
+          return;
+        }
 
         if (pan.end()) {
           event.preventDefault();
@@ -400,6 +419,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * Position content and refresh elements to show that loading is taking place.
        */
       function doLoading(pan) {
+        pan.isLoading = true;
         pan.el.classList.add('ptr-loading');
 
         // If no valid loading function exists, just reset elements
@@ -440,6 +460,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         };
 
         el.addEventListener('transitionend', elClassRemove, false);
+
+        pan.isLoading = false;
       };
     }
   }]);

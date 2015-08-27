@@ -86,6 +86,7 @@
   class PullRefresh extends Pan {
 
     constructor () {
+
       super(...arguments);
 
       this._el = this._options.el;
@@ -95,6 +96,7 @@
       this._state = {};
 
       this.pubSub = new PubSub();
+
     }
 
     get el () {
@@ -107,6 +109,10 @@
 
     reset () {
       super.reset();
+      this.resetState();
+    }
+
+    resetState () {
       this._state = {};
     }
 
@@ -269,12 +275,15 @@
 
 
 
+
       activate();
 
       ////////////
 
       function activate() {
         pan.reset();
+
+        pan.isLoading = false;
 
         pan.pubSub
         .subscribe('moved', (pan) => {
@@ -329,6 +338,10 @@
        */
       function touchStart (e) {
 
+        if (pan.isLoading) {
+          return;
+        }
+
         let t = e.touches ? e.touches[0] : e;
 
         pan.begin(t.clientY);
@@ -342,6 +355,10 @@
        */
       function touchMove (e) {
 
+        if (pan.isLoading) {
+          return;
+        }
+
         let t = e.touches ? e.touches[0] : e;
 
         if (pan.move(t.clientY)) {
@@ -352,6 +369,10 @@
       }
 
       function touchEnd (e) {
+
+        if (pan.isLoading) {
+          return;
+        }
 
         if (pan.end()) {
           event.preventDefault();
@@ -421,6 +442,7 @@
        * Position content and refresh elements to show that loading is taking place.
        */
       function doLoading (pan) {
+        pan.isLoading = true;
         pan.el.classList.add('ptr-loading');
 
         // If no valid loading function exists, just reset elements
@@ -460,6 +482,9 @@
         };
 
         el.addEventListener('transitionend', elClassRemove, false);
+
+
+        pan.isLoading = false;
       };
 
     }
