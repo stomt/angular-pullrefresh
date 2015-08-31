@@ -128,9 +128,6 @@
         this.isScrolledToTop() &&
         distance > 0) {
 
-        // this._el.style.overflow = 'visible';
-        // this._el.scrollTop = 0;
-
         super.move(distance);
 
         this._state.refresh = this.distance > this._options.threshold;
@@ -268,7 +265,9 @@
        * Holds all information about the current pan action
        */
       let pan = new PullRefresh({
-        el : bodyEl,
+        el : options.scrollable === 'self' ?
+          bodyEl :
+          $document[0].body,
         threshold : options.threshold,
         resistance : options.resistance
       });

@@ -159,9 +159,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         if (!this.isScrolling && this.isScrolledToTop() && distance > 0) {
 
-          // this._el.style.overflow = 'visible';
-          // this._el.scrollTop = 0;
-
           _get(Object.getPrototypeOf(PullRefresh.prototype), 'move', this).call(this, distance);
 
           this._state.refresh = this.distance > this._options.threshold;
@@ -275,7 +272,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * Holds all information about the current pan action
        */
       var pan = new PullRefresh({
-        el: bodyEl,
+        el: options.scrollable === 'self' ? bodyEl : $document[0].body,
         threshold: options.threshold,
         resistance: options.resistance
       });
