@@ -265,14 +265,14 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
       /**
        * Easy shortener for handling adding and removing body classes.
        */
-      var bodyEl = element[0] || $document[0].body,
-          bodyClass = bodyEl.classList;
+      var ptrEl = element[0] || $document[0].body,
+          ptrElClassList = ptrEl.classList;
 
       /**
        * Holds all information about the current pan action
        */
       var pan = new PullRefresh({
-        el: options.scrollable === 'self' ? bodyEl : $document[0].body,
+        el: options.scrollable === 'self' ? ptrEl : $document[0].body,
         threshold: options.threshold,
         resistance: options.resistance
       });
@@ -288,8 +288,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         pan.pubSub.subscribe('moved', function (pan) {
 
-          bodyClass[pan.state.refresh ? 'add' : 'remove']('ptr-refresh');
-          bodyClass[pan.state.pull ? 'add' : 'remove']('ptr-pull');
+          ptrElClassList[pan.state.refresh ? 'add' : 'remove']('ptr-refresh');
+          ptrElClassList[pan.state.pull ? 'add' : 'remove']('ptr-pull');
 
           setContentPan(pan);
         });
@@ -304,9 +304,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
           }
         });
 
-        listen(bodyEl, TOUCH_START, touchStart);
-        listen(bodyEl, TOUCH_MOVE, touchMove);
-        listen(bodyEl, TOUCH_END, touchEnd);
+        listen(ptrEl, TOUCH_START, touchStart);
+        listen(ptrEl, TOUCH_MOVE, touchMove);
+        listen(ptrEl, TOUCH_END, touchEnd);
       }
 
       function listen(el, evt, handler) {
@@ -419,7 +419,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        */
       function doLoading(pan) {
         pan.isLoading = true;
-        pan.el.classList.add('ptr-loading');
+        ptrElClassList.add('ptr-loading');
 
         // If no valid loading function exists, just reset elements
         if (!$scope.pullrefresh) {
@@ -445,20 +445,18 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
        * Reset all elements to their starting positions before any paning took place.
        */
       function doReset(pan) {
-        var el = pan.el,
-            classList = el.classList;
-
-        classList.remove('ptr-loading');
-        classList.remove('ptr-refresh');
-        classList.add('ptr-reset');
+        ptrElClassList.remove('ptr-loading');
+        ptrElClassList.remove('ptr-refresh');
+        ptrElClassList.add('ptr-reset');
 
         var elClassRemove = function elClassRemove() {
-          classList.remove('ptr-reset');
-          classList.remove('ptr-pull');
-          el.removeEventListener('transitionend', elClassRemove, false);
+          ptrElClassList.remove('ptr-reset');
+          ptrElClassList.remove('ptr-pull');
+
+          pan.el.removeEventListener('transitionend', elClassRemove, false);
         };
 
-        el.addEventListener('transitionend', elClassRemove, false);
+        pan.el.addEventListener('transitionend', elClassRemove, false);
 
         pan.isLoading = false;
       };
