@@ -1,10 +1,27 @@
 {
   "name": "angular-pullrefresh",
-  "private": true,
   "version": "0.1.8",
-  "description": "",
-  "repository": "",
+  "homepage": "https://github.com/stomt/angular-pullrefresh",
+  "description": "AngularJS directive to handle pull to refresh inside the app instead by browser.",
+  "contributors": [
+    "Simon Schmidt <simon-schmidt@alarie.de>",
+    "Max Klenk <max@klenk.biz>"
+  ],
   "license": "MIT",
+  "main": [
+    "./dist/pullrefresh.js",
+    "./dist/pullrefresh.css"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stomt/angular-pullrefresh.git"
+  },
+  "bugs": {
+    "url": "https://github.com/stomt/angular-pullrefresh/issues"
+  },
+  "dependencies": {
+    "angular": "~1.4.x"
+  },
   "devDependencies": {
     "gulp": "^3.9.0",
     "gulp-babel": "^5.2.1",
@@ -13,5 +30,20 @@
     "gulp-serve": "^1.0.0",
     "gulp-sourcemaps": "^1.5.2",
     "gulp-uglify": "^1.2.0"
-  }
+  },
+  "keywords": [
+    "pull",
+    "to",
+    "refresh",
+    "mobile",
+    "ios",
+    "android",
+    "chrome",
+    "pulltorefresh",
+    "pull-to-refresh",
+    "pullrefresh",
+    "pull-refresh",
+    "angular",
+    "angularJS"
+  ]
 }
