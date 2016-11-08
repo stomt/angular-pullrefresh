@@ -220,7 +220,9 @@
         hideLoader : '=pullrefreshHideLoader',
 
         // make the callback is evaluated on the parent scope
-        pullrefresh : '&'
+        pullrefresh : '&',
+
+        pullrefreshElement: '@'
       },
 
       templateUrl: 'template/pullrefresh/pullrefresh.html',
@@ -257,17 +259,21 @@
       /**
        * Easy shortener for handling adding and removing body classes.
        */
-      let ptrEl = element[0] || $document[0].body,
-        ptrElClassList = ptrEl.classList;
+      var ptrEl = $document[0].body;
+      if ($scope.pullrefreshElement) {
+        var elements = document.querySelectorAll($scope.pullrefreshElement);
+        if (elements.length > 0) {
+          ptrEl = elements[0];
+        }
+      }
 
+      let ptrElClassList = ptrEl.classList;
 
       /**
        * Holds all information about the current pan action
        */
       let pan = new PullRefresh({
-        el : options.scrollable === 'self' ?
-          ptrEl :
-          $document[0].body,
+        el : ptrEl,
         threshold : options.threshold,
         resistance : options.resistance
       });
