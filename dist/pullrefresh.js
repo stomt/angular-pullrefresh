@@ -1,17 +1,19 @@
 'use strict';
 
-var _get = function get(_x2, _x3, _x4) { var _again = true; _function: while (_again) { var object = _x2, property = _x3, receiver = _x4; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x2 = parent; _x3 = property; _x4 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
-var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 (function () {
   'use strict';
 
-  var PubSub = (function () {
+  var PubSub = function () {
     function PubSub() {
       _classCallCheck(this, PubSub);
 
@@ -54,11 +56,11 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return PubSub;
-  })();
+  }();
 
-  var Pan = (function () {
+  var Pan = function () {
     function Pan() {
-      var options = arguments.length <= 0 || arguments[0] === undefined ? { resistance: 1 } : arguments[0];
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { resistance: 1 };
 
       _classCallCheck(this, Pan);
 
@@ -116,29 +118,31 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return Pan;
-  })();
+  }();
 
-  var PullRefresh = (function (_Pan) {
+  var PullRefresh = function (_Pan) {
     _inherits(PullRefresh, _Pan);
 
     function PullRefresh() {
       _classCallCheck(this, PullRefresh);
 
-      _get(Object.getPrototypeOf(PullRefresh.prototype), 'constructor', this).apply(this, arguments);
+      var _this = _possibleConstructorReturn(this, (PullRefresh.__proto__ || Object.getPrototypeOf(PullRefresh)).apply(this, arguments));
 
-      this._el = this._options.el;
+      _this._el = _this._options.el;
 
-      this._options.threshold = this._options.threshold || 0;
+      _this._options.threshold = _this._options.threshold || 0;
 
-      this._state = {};
+      _this._state = {};
 
-      this.pubSub = new PubSub();
+      _this.pubSub = new PubSub();
+
+      return _this;
     }
 
     _createClass(PullRefresh, [{
       key: 'reset',
       value: function reset() {
-        _get(Object.getPrototypeOf(PullRefresh.prototype), 'reset', this).call(this);
+        _get(PullRefresh.prototype.__proto__ || Object.getPrototypeOf(PullRefresh.prototype), 'reset', this).call(this);
         this.resetState();
       }
     }, {
@@ -159,7 +163,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
         if (!this.isScrolling && this.isScrolledToTop() && distance > 0) {
 
-          _get(Object.getPrototypeOf(PullRefresh.prototype), 'move', this).call(this, distance);
+          _get(PullRefresh.prototype.__proto__ || Object.getPrototypeOf(PullRefresh.prototype), 'move', this).call(this, distance);
 
           this._state.refresh = this.distance > this._options.threshold;
           this._state.pull = this.distance > 0;
@@ -200,7 +204,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     }]);
 
     return PullRefresh;
-  })(Pan);
+  }(Pan);
 
   'use strict';
 
@@ -248,6 +252,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
     };
 
     ///////////////////////////////////////////////////////////
+
 
     function linkPullrefreshDirective($scope, element, attrs) {
 
@@ -479,6 +484,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
   'use strict';
 
   /* istanbul ignore next */
+
   var angular = window.angular ? window.angular : 'undefined' !== typeof require ? require('angular') : undefined;
 
   angular.module('pullrefresh').run(['$templateCache', function ($templateCache) {

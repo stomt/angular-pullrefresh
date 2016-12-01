@@ -33,7 +33,7 @@ gulp.task('compile', function () {
   gulp.src(paths.babel)
     .pipe(sourcemaps.init())
     .pipe(babel({
-      modules : 'common'
+      presets: ['es2015']
     }))
     .pipe(concat('pullrefresh.js'))
     .pipe(sourcemaps.write('.'))
