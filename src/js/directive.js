@@ -259,9 +259,9 @@
       /**
        * Easy shortener for handling adding and removing body classes.
        */
-      var ptrEl = $document[0].body;
+      let ptrEl = $document[0].body;
       if ($scope.pullrefreshElement) {
-        var elements = document.querySelectorAll($scope.pullrefreshElement);
+        let elements = document.querySelectorAll($scope.pullrefreshElement);
         if (elements.length > 0) {
           ptrEl = elements[0];
         }
@@ -369,8 +369,8 @@
         let t = e.touches ? e.touches[0] : e;
 
         if (pan.move(t.clientY)) {
-          event.preventDefault();
-          event.stopPropagation();
+          e.preventDefault();
+          e.stopPropagation();
         }
 
       }
@@ -382,8 +382,8 @@
         }
 
         if (pan.end()) {
-          event.preventDefault();
-          event.stopPropagation();
+          e.preventDefault();
+          e.stopPropagation();
         }
 
       }
@@ -458,7 +458,7 @@
         }
 
         // The loading function should return a promise
-        var loadingPromise = $scope.$eval($scope.pullrefresh);
+        let loadingPromise = $scope.$eval($scope.pullrefresh);
 
         // For UX continuity, make sure we show loading for at least one second before resetting
         setTimeout(function() {
@@ -469,7 +469,7 @@
           }
 
         }, 1000);
-      };
+      }
 
       /**
        * Reset all elements to their starting positions before any paning took place.
@@ -479,7 +479,7 @@
         ptrElClassList.remove('ptr-refresh');
         ptrElClassList.add('ptr-reset');
 
-        var elClassRemove = function() {
+        let elClassRemove = function() {
           ptrElClassList.remove('ptr-reset');
           ptrElClassList.remove('ptr-pull');
 
@@ -490,7 +490,7 @@
 
 
         pan.isLoading = false;
-      };
+      }
 
     }
   }]);

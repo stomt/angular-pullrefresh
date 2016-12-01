@@ -366,8 +366,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         var t = e.touches ? e.touches[0] : e;
 
         if (pan.move(t.clientY)) {
-          event.preventDefault();
-          event.stopPropagation();
+          e.preventDefault();
+          e.stopPropagation();
         }
       }
 
@@ -378,8 +378,8 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         }
 
         if (pan.end()) {
-          event.preventDefault();
-          event.stopPropagation();
+          e.preventDefault();
+          e.stopPropagation();
         }
       }
 
@@ -448,7 +448,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             });
           }
         }, 1000);
-      };
+      }
 
       /**
        * Reset all elements to their starting positions before any paning took place.
@@ -468,7 +468,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
         pan.el.addEventListener('transitionend', elClassRemove, false);
 
         pan.isLoading = false;
-      };
+      }
     }
   }]);
 })();
