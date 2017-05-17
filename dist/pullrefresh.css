@@ -77,9 +77,6 @@
   display: block;
 }
 
-.ptr-reset .ptr-state-pull {
-  display: none;
-}
 
 .loading {
   text-align: center;
