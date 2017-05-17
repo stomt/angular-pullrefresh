@@ -40,7 +40,7 @@
 
   <style>
 
-    .log{
+    .log {
       border-top: 20px solid black;
       position: absolute;
       bottom: 0;
@@ -65,19 +65,19 @@
   'use strict';
 
   function createConsole() {
-    var log = document.createElement('div');
+    let log = document.createElement('div');
     log.classList.add('log');
     document.body.appendChild(log);
 
-    var _console = window.console || null;
+    let _console = window.console || null;
 
 
     window.console = {
-      log : function () {
-        var line = document.createElement('div');
+      log: function() {
+        let line = document.createElement('div');
         line.innerText = [].slice.call(arguments).join(', ');
         log.appendChild(line);
-        var top = log.scrollHeight;
+        let top = log.scrollHeight;
         log.scrollTop = top - 200;
       }
     };
@@ -85,31 +85,33 @@
 
   // createConsole();
 </script>
-  <div class="scrollable"
-    pullrefresh-loader-style="prLoaderStyle"
-    pullrefresh-hide-loader="true"
-    pullrefresh-content-offset="0"
-    pullrefresh="onReload()">
+<div class="scrollable"
+     pullrefresh-loader-style="prLoaderStyle"
+     pullrefresh-hide-loader="true"
+     pullrefresh-content-offset="0"
+     pullrefresh="onReload()"
+     pullrefresh-template="template/pullrefresh/pullrefresh.html">
 
-    <div ng-style="prLoaderStyle" class="ptr">
+  <div ng-style="prLoaderStyle" class="ptr">
 
-        <div ng-class="ptrClass">
-          <span class="ptr-pulldown-icon"></span>
-          <span class="ptr-state-pull">Pull to refresh</span>
-          <span class="ptr-state-release">Release to refresh</span>
-          <span class="ptr-state-load">Reloading, please wait...</span>
-        </div>
-
-        <div class="loading">
-            <span class="l1"></span>
-            <span class="l2"></span>
-            <span class="l3"></span>
-        </div>
+    <div ng-class="ptrClass">
+      <span class="ptr-pulldown-icon"></span>
+      <span class="ptr-state-pull">Pull to refresh</span>
+      <span class="ptr-state-release">Release to refresh</span>
+      <span class="ptr-state-load">Reloading, please wait...</span>
     </div>
 
-    <div class="content" style="font-size:100px;">Just some content, that's by far longer than one display page on a mobile device, so that it should be scrollable.</div>
-
+    <div class="loading">
+      <span class="l1"></span>
+      <span class="l2"></span>
+      <span class="l3"></span>
+    </div>
   </div>
+
+  <div class="content" style="font-size:100px;">Just some content, that's by far longer than one display page on a
+    mobile device, so that it should be scrollable.
+  </div>
+
 </div>
 
 </body>
