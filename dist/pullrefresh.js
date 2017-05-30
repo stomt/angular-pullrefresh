@@ -40,7 +40,10 @@
         pullrefreshElement: '@',
 
         // allow users to insert an own template for the loader
-        pullrefreshTemplate: '@'
+        pullrefreshTemplate: '@',
+
+        // allows to disable the directive. this does only work before the link function was running
+        pullrefreshDisabled: '@'
       },
 
       templateUrl: getTemplateUrl,
@@ -56,6 +59,10 @@
     }
 
     function linkPullrefreshDirective($scope, element, attrs) {
+
+      if (attrs.pullrefreshDisabled === 'true') {
+        return;
+      }
 
       $scope.contentStyle = {};
       $scope.ptrStyle = {};
