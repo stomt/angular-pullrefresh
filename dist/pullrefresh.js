@@ -189,7 +189,7 @@
           return;
         }
 
-        if (pan.end()) {
+        if (pan.end() && e.cancelable) {
           e.preventDefault();
           e.stopPropagation();
         }
