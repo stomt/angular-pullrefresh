@@ -1,6 +1,6 @@
 {
   "name": "angular-pullrefresh",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "homepage": "https://github.com/stomt/angular-pullrefresh",
   "description": "AngularJS directive to handle pull to refresh inside the app instead by browser.",
   "authors": [
