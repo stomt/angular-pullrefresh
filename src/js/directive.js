@@ -212,8 +212,7 @@
           return;
         }
 
-        // this throws a warning as non-cancelable events should not be canceled. but we need to cancel it to prevent the chrome native pull refresh.
-        if (pan.end()) {
+        if (pan.end() && e.cancelable) {
           e.preventDefault();
           e.stopPropagation();
         }
